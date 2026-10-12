@@ -1,0 +1,16 @@
+{
+  "type": "UnionNetworkActuator",
+  "actor": "urn:ame:codex-authority-bounded-integration-actuator",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "integrate-authorized-candidate",
+  "inputType": "LeaderAuthorityAndActuationPlanK",
+  "outputType": "CandidatePatchK",
+  "offer": "urn:offer:codex-authority-bounded-integration",
+  "protocols": ["MCP", "A2A 1.0", "RMN"],
+  "provider": { "requiredActor": "urn:ame:bare-cedar-fog-codex", "mode": "self-provisioned-execute" },
+  "compositionBoundary": "Consumes one exact, live, single-use LeaderAuthorityK that binds the demand, inert integrated plan, target, before digest, and exact after digest. Only the stable Codex actor writes; supplier artifacts remain authority-free.",
+  "consideration": { "quoteState": "not-applicable-self-provisioned", "incurredState": "requires-native-resource-receipt", "acceptedValueState": "unknown-until-customer-outcome", "unknownIsZero": false },
+  "receipt": "CandidatePatchK binds the plan, authority claim, exact before/after bytes, source-provider receipts, native resource receipt, and author process.",
+  "refusal": "Refuse a plain Leader expression, authority reference, forged or stale content address, expired/replayed authority, changed preimage, scope/path escape, symlink, non-Codex actor, unintegrated plan, or missing native resource receipt before mutation.",
+  "acceptance": "Candidate delivery is never verification, customer acceptance, demand closure, revenue, or proof that cost was incurred."
+}

@@ -1,0 +1,8 @@
+{
+  "type": "UnionNetworkActuator", "actor": "urn:ame:codex-office-obligation-actuator", "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "project-office-obligations", "inputType": "OfficeIncumbencyDutyK", "outputType": "OfficeObligationSetK", "offer": "urn:offer:codex-office-obligation-projection",
+  "protocols": ["MCP", "A2A 1.0", "RMN"], "provider": { "requiredActor": "urn:ame:union-officer-academy", "mode": "repertoire-offer-plus-codex-projection" },
+  "compositionBoundary": "The office persists without a holder; only a separately receipted dignitas incumbency joins character and office. Standing duty retains its authority, work, correlative claimant, and accountable office across face changes and delegation.",
+  "consideration": { "quoteState": "provider-authored", "incurredState": "requires-native-resource-receipt", "acceptedValueState": "unknown-until-customer-outcome", "unknownIsZero": false },
+  "refusal": "Refuse a holder asserted by office/character, half-seat, denial, contradiction, duty not borne by the office, deontic mismatch, or incomplete duty denominator."
+}

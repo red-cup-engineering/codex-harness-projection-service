@@ -1,0 +1,16 @@
+{
+  "type": "NetworkActuator",
+  "actor": "urn:ame:codex-requirement-trajectory-actuator",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "plan-requirement-preserving-actuation",
+  "domain": "RequirementSetAndReceiptedProviderPlanChainK",
+  "codomain": "RequirementBoundActuationPlanOrObstructionK",
+  "offer": "urn:offer:codex-requirement-trajectory",
+  "protocolFaces": ["MCP", "A2A 1.0", "RMN"],
+  "consideration": { "quoteState": "unknown-until-provider-authored-offer", "incurredState": "unknown-until-independently-witnessed", "unknownIsZero": false },
+  "compositionBoundary": "Integrates separately receipted SAS, HLD, LLD, and bounded-work candidates while preserving every exact completion condition and predecessor edge; carries no mutation or acceptance authority.",
+  "receipt": "Content-addressed plan or obstruction binding the stable Codex Actor, exact RequirementSetK, evidence predecessor, provider Actors, offers, market/provider receipts, stage candidates, and consideration observations.",
+  "refusal": "Refuse missing or collapsed tiers, synthetic or wrong providers, changed requirements, broken predecessor edges, absent receipts, credentials, ambient repository access, or authority-bearing candidates. A provider refusal returns a typed no-fallback obstruction.",
+  "outcomeAuthority": "urn:leader:emsenn",
+  "integrationFace": "stdio:serve-codex-mape-office-mcp#integrate_requirement_bound_actuation_plan"
+}

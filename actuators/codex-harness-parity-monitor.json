@@ -1,0 +1,19 @@
+{
+  "type": "NetworkActuator",
+  "actor": "urn:ame:codex-harness-parity-monitor",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "observe-codex-harness-parity",
+  "domain": "CodexHarnessParityBaselineK",
+  "codomain": "CodexHarnessParityPositionK",
+  "offer": "urn:offer:codex-harness-parity-monitor",
+  "protocolFaces": ["MCP", "A2A 1.0", "RMN"],
+  "consideration": {
+    "quoteState": "unknown-until-provider-authored-offer",
+    "incurredState": "unknown-until-independently-witnessed",
+    "unknownIsZero": false
+  },
+  "receipt": "content-addressed source-set digests plus returned capability and per-source-set deprecation position",
+  "refusal": "Refuse closure and source-tree deprecation eligibility when any source is unclassified or drifting, any actuator contract is incomplete or aliased, or any mapped capability lacks receiver-accepted state and every required evidence receipt. Deprecation eligibility never conveys removal authority.",
+  "outcomeAuthority": "urn:leader:emsenn",
+  "integrationFace": "stdio:serve-codex-enterprise-mcp#observe_codex_harness_parity"
+}

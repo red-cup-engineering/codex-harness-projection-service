@@ -1,0 +1,8 @@
+{
+  "type": "UnionNetworkActuator", "actor": "urn:ame:codex-immunitas-actuator", "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "observe-immunitas", "inputType": "ImmunitasAndProposedChangeK", "outputType": "ImmunitasObservationK", "offer": "urn:offer:codex-immunitas-observation",
+  "protocols": ["MCP", "A2A 1.0", "RMN"], "provider": { "requiredActor": "urn:ame:bare-cedar-fog-codex", "mode": "self-provisioned-observation" },
+  "compositionBoundary": "Immunitas is a second-order protection correlated with another party's disability; it is neither liberty, power, task exemption, nor mutation authority.",
+  "consideration": { "quoteState": "not-applicable-self-provisioned", "incurredState": "requires-native-resource-receipt", "acceptedValueState": "unknown-until-customer-outcome", "unknownIsZero": false },
+  "refusal": "A protected party's attempted alteration is refused with the exact original obligation preserved. A non-blocked observation still conveys no authority to change it."
+}

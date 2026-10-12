@@ -1,0 +1,21 @@
+{
+  "name": "@red-cup-engineering/codex-harness-projection-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Projects the source-owned office, duties and skill methods into disposable repository-local Codex context, without copied skills or operational authority.",
+  "bin": {
+    "project-office-context": "./scripts/project-office-context.mjs"
+  },
+  "scripts": {
+    "check": "node --check src/projector.mjs && node --check scripts/project-office-context.mjs",
+    "test": "node --test test/*.test.mjs",
+    "verify": "npm run check && npm test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@red-cup-engineering/agent-harness-computer-system-engineering-services-section": "workspace:*"
+  }
+}
