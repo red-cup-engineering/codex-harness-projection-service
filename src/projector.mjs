@@ -109,6 +109,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
   const read = file => {
     const bytes = readFileSync(join(agencyRoot, file));
     if (bytes.length > 131072) throw new Error(`office context source exceeds bound: ${file}`);
+    if (/^(?:<{7}|>{7})(?: .*)?$/m.test(bytes.toString("utf8"))) throw new Error(`office context source has unresolved merge markers: ${file}`);
     sources.push({ path: file, sha256: createHash("sha256").update(bytes).digest("hex") });
     return bytes.toString("utf8");
   };
