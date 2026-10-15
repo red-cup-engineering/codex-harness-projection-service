@@ -105,9 +105,12 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
   if (!["full", "index"].includes(detail)) throw new TypeError("office context detail must be full or index");
   agencyRoot = resolve(agencyRoot);
   target = resolve(target);
+  const sourceRoot = realpathSync(agencyRoot);
   const sources = [];
   const read = file => {
-    const bytes = readFileSync(join(agencyRoot, file));
+    const source = realpathSync(join(agencyRoot, file));
+    if (!inside(sourceRoot, source) || !stat(source)?.isFile()) throw new Error(`office context source leaves its declared agency: ${file}`);
+    const bytes = readFileSync(source);
     if (bytes.length > 131072) throw new Error(`office context source exceeds bound: ${file}`);
     if (/^(?:<{7}|>{7})(?: .*)?$/m.test(bytes.toString("utf8"))) throw new Error(`office context source has unresolved merge markers: ${file}`);
     sources.push({ path: file, sha256: createHash("sha256").update(bytes).digest("hex") });
@@ -175,9 +178,9 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
     "This is a source index, not a replacement for its complete records. Every authored rule statement and source digest is retained. Read the complete applicable duty, rule and skill sources before using them; load conditional methods only when the current work needs them. Keep method application distinct from product requirements.",
     "## Source methods", ...methods.map(method => `- ${method.id}: ${link(method.path)}`),
     "Read the applicable complete method before selecting execution. Original requirements and source design govern construction; repeated partial compilation and patching do not establish that design.",
-    "## Office", link(`offices/${office}.json`), JSON.stringify(pick(definition, ["id", "name", "authority-scope", "jurisdiction", "bears-duty", "provides-skill"]), null, 2),
+    "## Office", link(`offices/${office}.json`), JSON.stringify(pick(definition, ["id", "name", "normative-structure", "authority-scope", "jurisdiction", "bears-duty", "provides-skill"]), null, 2),
     ...rules.flatMap(rule => [`## Authored rule: ${rule.id}`, link(`rules/${rule.id}.json`), JSON.stringify(pick(rule, ["id", "statement", "subject", "action"]), null, 2)]),
-    ...duties.flatMap(duty => [`## Duty: ${duty.id}`, link(`duties/${duty.id}.json`), JSON.stringify(pick(duty, ["id", "name", "authority", "work", "skills"]), null, 2)]),
+    ...duties.flatMap(duty => [`## Duty: ${duty.id}`, link(`duties/${duty.id}.json`), JSON.stringify(pick(duty, ["id", "name", "authority", "claim", "work", "required-act-or-state", "receiver-condition", "skills"]), null, 2)]),
     "## Source custody", JSON.stringify({ ...custody, detail }, null, 2), "",
   ].join("\n\n");
   if (Buffer.byteLength(text) > 524288) throw new Error("office context exceeds bound");
