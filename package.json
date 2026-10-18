@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "description": "Projects the source-owned office, duties and skill methods into disposable repository-local Codex context, without copied skills or operational authority.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cup-engineering/computer-systems-engineering-services-section.git",
+    "directory": "services/agent-computer-system-engineering-services-section/services/agent-harness-computer-system-engineering-services-section/services/codex-harness-services-section/services/codex-harness-projection-service"
+  },
   "bin": {
     "project-office-context": "./scripts/project-office-context.mjs"
   },
