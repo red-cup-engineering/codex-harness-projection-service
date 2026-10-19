@@ -100,25 +100,26 @@ function rollbackSkillDiscovery(applied) {
 }
 
 /** Project source-authored office methods as context, never as operational authority. */
-export function projectOfficeContext({ agencyRoot, office, target, detail = "full", projectRoot }) {
+export function projectOfficeContext({ agencyRoot, office, target, detail = "full", projectRoot, corpusRoot }) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(office ?? "")) throw new TypeError("a canonical office id is required");
   if (!["full", "index"].includes(detail)) throw new TypeError("office context detail must be full or index");
   agencyRoot = resolve(agencyRoot);
   target = resolve(target);
   const sourceRoot = realpathSync(agencyRoot);
   const sources = [];
-  const read = file => {
-    const source = realpathSync(join(agencyRoot, file));
-    if (!inside(sourceRoot, source) || !stat(source)?.isFile()) throw new Error(`office context source leaves its declared agency: ${file}`);
+  const read = (file, root = agencyRoot) => {
+    const owner = root === agencyRoot ? sourceRoot : root;
+    const source = realpathSync(join(root, file));
+    if (!inside(owner, source) || !stat(source)?.isFile()) throw new Error(`office context source leaves its declared agency: ${file}`);
     const bytes = readFileSync(source);
     if (bytes.length > 131072) throw new Error(`office context source exceeds bound: ${file}`);
     if (/^(?:<{7}|>{7})(?: .*)?$/m.test(bytes.toString("utf8"))) throw new Error(`office context source has unresolved merge markers: ${file}`);
-    sources.push({ path: file, sha256: createHash("sha256").update(bytes).digest("hex") });
+    sources.push({ path: file, ...(root === agencyRoot ? {} : { root }), sha256: createHash("sha256").update(bytes).digest("hex") });
     return bytes.toString("utf8");
   };
-  const record = (pool, id) => {
+  const record = (pool, id, root = agencyRoot) => {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) throw new Error(`invalid ${pool} reference`);
-    const value = JSON.parse(read(`${pool}/${id}.json`));
+    const value = JSON.parse(read(`${pool}/${id}.json`, root));
     if (value.id !== id) throw new Error(`mismatched ${pool} source identity`);
     return value;
   };
@@ -132,7 +133,37 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
   if (ruleFiles.length > 512) throw new Error("office rule context exceeds record bound");
   const rules = ruleFiles.map(file => record("rules", file.slice(0, -5)));
   const definition = record("offices", office);
-  const duties = (definition["bears-duty"] ?? []).map(ref => record("duties", ref.split("/").at(-1)));
+  // Organizing's cross-house address law is <estate-relative section>#<id>:
+  // read only that owner's mounted lib/agency pool, never a basename substitute.
+  // The source-only projector needs no estate census or institutional read.
+  const dutySources = [];
+  const duties = (definition["bears-duty"] ?? []).map(ref => {
+    if (typeof ref !== "string") throw new Error("invalid duties reference");
+    let id, root = agencyRoot;
+    if (ref.includes("#")) {
+      const match = /^(?:([a-z0-9][a-z0-9.-]*(?:\/[a-z0-9][a-z0-9.-]*)*))?#([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(ref);
+      if (!match) throw new Error("invalid duties reference");
+      id = match[2];
+      if (match[1]) {
+        const declared = corpusRoot ?? (projectRoot === undefined ? undefined : join(projectRoot, "lib"));
+        if (declared === undefined) throw new Error("qualified duties need a declared corpus root or project root");
+        const corpus = realpathSync(resolve(declared));
+        if (!inside(corpus, sourceRoot)) throw new Error("office agency is outside its declared corpus");
+        root = join(corpus, match[1], "lib", "agency");
+        const owner = realpathSync(root);
+        if (owner !== root || !inside(corpus, owner)) throw new Error("duty owner leaves its declared corpus or names a foreign source reference");
+        if (owner === sourceRoot) root = agencyRoot;
+      }
+    } else {
+      // Keep the original descriptive slash spelling, but never normalize an
+      // absolute path, URL or traversal into a local record with the same id.
+      if (!/^[a-z0-9][a-z0-9.-]*(?:\/[a-z0-9][a-z0-9.-]*)*$/.test(ref)) throw new Error("invalid duties reference");
+      id = ref.split("/").at(-1);
+    }
+    const duty = record("duties", id, root);
+    dutySources.push({ root, path: `duties/${id}.json` });
+    return duty;
+  });
   const skills = [...new Set([...(definition["provides-skill"] ?? []), ...duties.flatMap(d => d.skills ?? [])])];
   const methods = skills.map(id => {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) throw new Error("invalid skill reference");
@@ -143,7 +174,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
   if (methods.length > 128) throw new Error("office skill discovery exceeds bound");
   // An unchanged SKILL.md can point to a revised intake. Include the actual
   // linked source closure in freshness custody, without copying it into context.
-  const received = new Set(sources.map(source => source.path));
+  const received = new Set(sources.filter(source => source.root === undefined).map(source => source.path));
   const pending = methods.map(method => ({ path: method.path, text: method.text }));
   while (pending.length) {
     const source = pending.pop();
@@ -171,7 +202,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
     "## Source custody", JSON.stringify(custody, null, 2), "",
   ].join("\n\n");
   const pick = (value, fields) => Object.fromEntries(fields.filter(field => value[field] !== undefined).map(field => [field, value[field]]));
-  const link = file => `[${file}](${join(agencyRoot, file)})`;
+  const link = (file, root = agencyRoot) => `[${file}](${join(root, file)})`;
   const text = detail === "full" ? full : [
     `# Projected office context: ${definition.name ?? office}`,
     "Generated from source records. These records do not grant this process runtime authority, incumbency, delegation or permission to override the human's continuing objective and accumulated corrections.",
@@ -180,7 +211,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
     "Read the applicable complete method before selecting execution. Original requirements and source design govern construction; repeated partial compilation and patching do not establish that design.",
     "## Office", link(`offices/${office}.json`), JSON.stringify(pick(definition, ["id", "name", "normative-structure", "authority-scope", "jurisdiction", "bears-duty", "provides-skill"]), null, 2),
     ...rules.flatMap(rule => [`## Authored rule: ${rule.id}`, link(`rules/${rule.id}.json`), JSON.stringify(pick(rule, ["id", "statement", "subject", "action"]), null, 2)]),
-    ...duties.flatMap(duty => [`## Duty: ${duty.id}`, link(`duties/${duty.id}.json`), JSON.stringify(pick(duty, ["id", "name", "authority", "claim", "work", "required-act-or-state", "receiver-condition", "skills"]), null, 2)]),
+    ...duties.flatMap((duty, index) => [`## Duty: ${duty.id}`, link(dutySources[index].path, dutySources[index].root), JSON.stringify(pick(duty, ["id", "name", "authority", "claim", "work", "required-act-or-state", "receiver-condition", "skills"]), null, 2)]),
     "## Source custody", JSON.stringify({ ...custody, detail }, null, 2), "",
   ].join("\n\n");
   if (Buffer.byteLength(text) > 524288) throw new Error("office context exceeds bound");
