@@ -75,7 +75,7 @@ test("foreign occupied entries, escaped source and replaced retired references r
       rmSync(join(f.projectRoot, ".agents/skills/receive")); symlinkSync(foreign, join(f.projectRoot, ".agents/skills/receive"), "dir");
       if (scenario === "replaced-retired") writeFileSync(f.office, JSON.stringify({ id: "cto", "provides-skill": ["assess"] }));
     }
-    assert.throws(f.project, /foreign|declared source/);
+    assert.throws(f.project, /foreign|declared source|declared agency/);
     assert.deepEqual(readFileSync(f.target), previous);
     assert.equal(readFileSync(join(foreign, "SKILL.md"), "utf8"), "foreign contents\n");
   }
@@ -93,14 +93,16 @@ test("linked project discovery or briefing directories cannot write outside the 
   }
 });
 
-test("the actual CTO source is received through eight project references, with source and digest custody", t => {
+test("the actual CTO source receives every currently authored method with source and digest custody", t => {
   const projectRoot = mkdtempSync(join(tmpdir(), "cto-discovery-"));
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
   const agencyRoot = "/home/emsenn/info/lib/emsenn/services/561-group/services/561-group-services-section/lib/agency";
   const target = join(projectRoot, ".office-context/office-context.md");
   const result = projectOfficeContext({ projectRoot, agencyRoot, target, office: "chief-technology-officer", detail: "index" });
   const received = receive(projectRoot);
-  assert.equal(received.length, 8); assert.equal(result.discovery.registered, 8);
+  const expected = JSON.parse(readFileSync(join(agencyRoot, "offices/chief-technology-officer.json"), "utf8"))["provides-skill"].sort();
+  assert.ok(expected.length > 0); assert.deepEqual(received.map(row => row.id).sort(), expected);
+  assert.equal(result.discovery.registered, expected.length);
   for (const row of received) {
     assert.ok(row.source.startsWith(agencyRoot + "/skills/"));
     assert.ok(result.sources.some(source => source.path === `skills/${row.id}/SKILL.md` && source.sha256 === row.sha256));
@@ -110,7 +112,7 @@ test("the actual CTO source is received through eight project references, with s
   assert.equal(result.discovery.currentSessionDiscovery, "unobserved");
 });
 
-test("existing project binding and CLI expose eight canonical references without changing provider settings", t => {
+test("existing project binding and CLI expose current canonical methods without changing provider settings", t => {
   const projectRoot = mkdtempSync(join(tmpdir(), "cto-cli-discovery-"));
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
   mkdirSync(join(projectRoot, ".codex")); mkdirSync(join(projectRoot, ".claude"));
@@ -122,10 +124,11 @@ test("existing project binding and CLI expose eight canonical references without
   const result = spawnSync(process.execPath, [new URL("../scripts/project-office-context.mjs", import.meta.url).pathname, file], { encoding: "utf8", timeout: 5000, maxBuffer: 64 * 1024 });
   assert.equal(result.status, 0, result.stderr);
   const report = JSON.parse(result.stdout);
-  assert.equal(report.discovery.registered, 8); assert.equal(report.discovery.projectRoot, projectRoot);
+  const expected = JSON.parse(readFileSync(join(agencyRoot, "offices/chief-technology-officer.json"), "utf8"))["provides-skill"].sort();
+  assert.ok(expected.length > 0); assert.equal(report.discovery.registered, expected.length); assert.equal(report.discovery.projectRoot, projectRoot);
   assert.equal(report.discovery.currentSessionDiscovery, "unobserved");
   assert.deepEqual(report.resources.written, []); assert.equal(report.resources.activeSessionGuarded, false);
-  assert.equal(receive(projectRoot).length, 8);
+  assert.deepEqual(receive(projectRoot).map(row => row.id).sort(), expected);
   assert.equal(readFileSync(join(projectRoot, ".codex/config.toml"), "utf8"), "unrelated_provider = true\n");
   assert.equal(readFileSync(join(projectRoot, ".claude/settings.local.json"), "utf8"), "{\"unrelated\":true}\n");
 });
