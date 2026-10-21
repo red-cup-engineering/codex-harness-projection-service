@@ -21,5 +21,10 @@
   },
   "dependencies": {
     "@red-cup-engineering/agent-harness-computer-system-engineering-services-section": "workspace:*"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
   }
 }
