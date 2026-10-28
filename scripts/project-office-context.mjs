@@ -13,7 +13,7 @@ if (config.type !== "SourceOfficeContextProjection" || config.authority !== "sou
 const target = resolve(dirname(file), config.target ?? "office-context.md");
 try {
   const declaredProject = config.projectRoot ?? config.hostResources?.node;
-  const result = projectOfficeContext({ agencyRoot: resolve(dirname(file), config.agencyRoot), office: config.office, target, detail: config.detail ?? "full", ...(declaredProject === undefined ? {} : { projectRoot: resolve(dirname(file), declaredProject) }), ...(config.corpusRoot === undefined ? {} : { corpusRoot: resolve(dirname(file), config.corpusRoot) }) });
+  const result = projectOfficeContext({ agencyRoot: resolve(dirname(file), config.agencyRoot), office: config.office, target, detail: config.detail ?? "index", ...(declaredProject === undefined ? {} : { projectRoot: resolve(dirname(file), declaredProject) }), ...(config.corpusRoot === undefined ? {} : { corpusRoot: resolve(dirname(file), config.corpusRoot) }) });
   const resources = config.hostResources === undefined ? undefined : writeHostResourceControl({ node: resolve(dirname(file), config.hostResources.node), providers: config.hostResources.providers ?? ["codex"] });
   console.log(JSON.stringify({ office: result.office, duties: result.duties, skills: result.skills, rules: result.rules, target: result.target, written: result.written, ...(result.discovery === undefined ? {} : { discovery: result.discovery }), ...(resources === undefined ? {} : { resources }) }));
 } catch (error) {
