@@ -154,9 +154,9 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
   // Organizing's cross-house address law is <estate-relative section>#<id>:
   // read only that owner's mounted lib/agency pool, never a basename substitute.
   // The source-only projector needs no estate census or institutional read.
-  const resolveReference = (ref, pool, defaultRoot = agencyRoot) => {
+  const resolveReference = (ref, pool) => {
     if (typeof ref !== "string") throw new Error(`invalid ${pool} reference`);
-    let id, root = defaultRoot;
+    let id, root = agencyRoot;
     if (ref.includes("#")) {
       const match = /^(?:([a-z0-9][a-z0-9.-]*(?:\/[a-z0-9][a-z0-9.-]*)*))?#([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(ref);
       if (!match) throw new Error(`invalid ${pool} reference`);
@@ -186,8 +186,11 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
     dutySources.push({ root, path: `duties/${id}.json` });
     return duty;
   });
+  // Generic duties name method bindings supplied by the configured office.
+  // Only an explicit qualified reference selects another method owner; a
+  // reusable Engineering duty must not acquire a Group-instance dependency.
   const skills = [...(definition["provides-skill"] ?? []).map(ref => resolveReference(ref, "skills")),
-    ...duties.flatMap((duty, index) => (duty.skills ?? []).map(ref => resolveReference(ref, "skills", dutySources[index].root)))];
+    ...duties.flatMap(duty => (duty.skills ?? []).map(ref => resolveReference(ref, "skills")))];
   const selectedMethods = new Map(skills.map(method => [`${method.root}#${method.id}`, method]));
   const methods = [...selectedMethods.values()].map(({ id, root }) => {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) throw new Error("invalid skill reference");
