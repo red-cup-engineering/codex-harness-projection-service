@@ -9,7 +9,7 @@ import { projectOfficeContext } from "../src/projector.mjs";
 function fixture(t) {
   const projectRoot = mkdtempSync(join(tmpdir(), "qualified-office-"));
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
-  const corpusRoot = join(projectRoot, "lib"), agencyRoot = join(corpusRoot, "group", "lib/agency");
+  const corpusRoot = projectRoot, agencyRoot = join(corpusRoot, "group", "lib/agency");
   const foreign = join(corpusRoot, "engineering", "lib/agency");
   for (const root of [agencyRoot, foreign]) for (const pool of ["offices", "duties"]) mkdirSync(join(root, pool), { recursive: true });
   mkdirSync(join(agencyRoot, "skills/execute"), { recursive: true });
@@ -17,7 +17,7 @@ function fixture(t) {
   writeFileSync(join(agencyRoot, "skills/execute/reference.md"), "The actual source closure.\n");
   const officeFile = join(agencyRoot, "offices/engineer.json"), target = join(projectRoot, ".office-context/office-context.md");
   const office = refs => writeFileSync(officeFile, JSON.stringify({ id: "engineer", "bears-duty": refs }));
-  const duty = (root, id, receiving) => writeFileSync(join(root, `duties/${id}.json`), JSON.stringify({ id, skills: ["execute"], "receiver-condition": receiving }));
+  const duty = (root, id, receiving) => writeFileSync(join(root, `duties/${id}.json`), JSON.stringify({ id, skills: [root === agencyRoot ? "execute" : "group#execute"], "receiver-condition": receiving }));
   duty(agencyRoot, "deliver", "local receiving"); duty(foreign, "deliver", "foreign receiving");
   office(["deliver"]);
   return { projectRoot, corpusRoot, agencyRoot, foreign, office, duty, target,
@@ -46,6 +46,64 @@ test("qualified duty changes refresh the briefing and wrong identities preserve 
   writeFileSync(join(f.foreign, "duties/deliver.json"), JSON.stringify({ id: "substituted" }));
   assert.throws(() => f.project(), /mismatched duties source identity/);
   assert.deepEqual(readFileSync(f.target), received);
+});
+
+test("a moved method keeps its real owner through context, discovery, freshness and retirement", t => {
+  const f = fixture(t), source = join(f.foreign, "skills/review/SKILL.md");
+  mkdirSync(join(f.foreign, "skills/review"), { recursive: true });
+  writeFileSync(source, "---\nname: review\ndescription: Receive the actual source.\n---\nRead [the contract](contract.md).\n");
+  writeFileSync(join(f.foreign, "skills/review/contract.md"), "Foreign contract, revision one.\n");
+  const office = join(f.agencyRoot, "offices/engineer.json");
+  writeFileSync(office, JSON.stringify({ id: "engineer", "provides-skill": ["engineering#review"] }));
+  const first = f.project();
+  assert.equal(first.skills, 1);
+  assert.equal(readFileSync(join(f.projectRoot, ".agents/skills/review/SKILL.md"), "utf8"), readFileSync(source, "utf8"));
+  assert.ok(first.sources.some(entry => entry.root === f.foreign && entry.path === "skills/review/contract.md"));
+  assert.ok(readFileSync(f.target, "utf8").includes(source));
+  writeFileSync(join(f.foreign, "skills/review/contract.md"), "Foreign contract, revision two.\n");
+  assert.notDeepEqual(f.project().sources, first.sources);
+  const previous = readFileSync(f.target);
+  rmSync(source);
+  assert.throws(f.project, /skill needs one source/);
+  assert.deepEqual(readFileSync(f.target), previous);
+  writeFileSync(office, JSON.stringify({ id: "engineer" }));
+  assert.equal(f.project().discovery.registered, 0);
+  assert.equal(existsSync(join(f.projectRoot, ".agents/skills/review")), false);
+});
+
+test("same-named methods from different owners refuse discovery without replacing received context", t => {
+  const f = fixture(t); f.project(); const previous = readFileSync(f.target);
+  mkdirSync(join(f.foreign, "skills/execute"), { recursive: true });
+  writeFileSync(join(f.foreign, "skills/execute/SKILL.md"), "Foreign method with the same discovery name.\n");
+  writeFileSync(join(f.agencyRoot, "offices/engineer.json"), JSON.stringify({ id: "engineer", "provides-skill": ["execute", "engineering#execute"] }));
+  assert.throws(f.project, /ambiguous discovery names/);
+  assert.deepEqual(readFileSync(f.target), previous);
+  assert.match(readFileSync(join(f.projectRoot, ".agents/skills/execute/SKILL.md"), "utf8"), /Read \[the original\]/);
+});
+
+test("received discovery follows a method's owner move without copying or retaining the old route", t => {
+  const f = fixture(t); f.project();
+  mkdirSync(join(f.foreign, "skills/execute"), { recursive: true });
+  const foreignSource = join(f.foreign, "skills/execute/SKILL.md");
+  writeFileSync(foreignSource, "---\nname: execute\ndescription: The moved method.\n---\nCurrent foreign owner.\n");
+  writeFileSync(join(f.agencyRoot, "offices/engineer.json"), JSON.stringify({ id: "engineer", "provides-skill": ["engineering#execute"] }));
+  const result = f.project();
+  assert.equal(result.discovery.referencesChanged, 1);
+  assert.equal(readFileSync(join(f.projectRoot, ".agents/skills/execute/SKILL.md"), "utf8"), readFileSync(foreignSource, "utf8"));
+  assert.equal(f.project().discovery.referencesChanged, 0);
+  assert.ok(readFileSync(f.target, "utf8").includes(foreignSource));
+});
+
+test("original source-only custody upgrades before a removed discovery reference retires", t => {
+  const f = fixture(t); f.project();
+  const marker = "\n\n## Source custody\n\n", text = readFileSync(f.target, "utf8"), index = text.lastIndexOf(marker);
+  const custody = JSON.parse(text.slice(index + marker.length));
+  delete custody.methods;
+  writeFileSync(f.target, text.slice(0, index + marker.length) + JSON.stringify(custody) + "\n");
+  writeFileSync(join(f.agencyRoot, "offices/engineer.json"), JSON.stringify({ id: "engineer" }));
+  assert.equal(f.project().discovery.registered, 0);
+  assert.equal(existsSync(join(f.projectRoot, ".agents/skills/execute")), false);
+  assert.ok(readFileSync(f.target, "utf8").includes('"methods": []'));
 });
 
 test("qualified references never fall back to another owner's local basename", t => {
@@ -80,9 +138,9 @@ test("foreign owner aliases and escaped duty files refuse within the declared co
   assert.deepEqual(readFileSync(f.target), received);
 });
 
-test("the actual Chief Engineering source receives all five duties from their authored houses", t => {
+test("the actual Chief Engineering source receives all five duties from their authored houses", { skip: !process.env.HARNESS_SOURCE_CORPUS }, t => {
   const projectRoot = mkdtempSync(join(tmpdir(), "actual-chief-engineer-")); t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
-  const corpusRoot = "/home/emsenn/info/lib", agencyRoot = join(corpusRoot, "emsenn/services/561-group/services/561-group-services-section/lib/agency");
+  const corpusRoot = process.env.HARNESS_SOURCE_CORPUS, agencyRoot = join(corpusRoot, "services/internal-services-section/lib/agency");
   const target = join(projectRoot, ".office-context/office-context.md");
   const result = projectOfficeContext({ projectRoot, corpusRoot, agencyRoot, target, office: "chief-engineering-officer", detail: "index" });
   assert.equal(result.duties, 5); assert.ok(result.skills > 0);
@@ -96,7 +154,7 @@ test("the original CLI derives the corpus from its declared project and accepts 
   const f = fixture(t); f.office(["engineering#deliver"]); mkdirSync(join(f.projectRoot, ".codex"));
   const config = join(f.projectRoot, ".codex/office.json");
   for (const explicit of [false, true]) {
-    writeFileSync(config, JSON.stringify({ type: "SourceOfficeContextProjection", authority: "source-context-only", agencyRoot: f.agencyRoot, office: "engineer", projectRoot: "..", ...(explicit ? { corpusRoot: "../lib" } : {}), target: "../.office-context/office-context.md", detail: "index" }));
+    writeFileSync(config, JSON.stringify({ type: "SourceOfficeContextProjection", authority: "source-context-only", agencyRoot: f.agencyRoot, office: "engineer", projectRoot: "..", ...(explicit ? { corpusRoot: ".." } : {}), target: "../.office-context/office-context.md", detail: "index" }));
     const result = spawnSync(process.execPath, [new URL("../scripts/project-office-context.mjs", import.meta.url).pathname, config], { encoding: "utf8", timeout: 5000 });
     assert.equal(result.status, 0, result.stderr); assert.equal(JSON.parse(result.stdout).duties, 1);
     assert.match(readFileSync(f.target, "utf8"), /foreign receiving/);
