@@ -17,7 +17,7 @@ function fixture(t) {
   writeFileSync(join(agencyRoot, "skills/execute/reference.md"), "The actual source closure.\n");
   const officeFile = join(agencyRoot, "offices/engineer.json"), target = join(projectRoot, ".office-context/office-context.md");
   const office = refs => writeFileSync(officeFile, JSON.stringify({ id: "engineer", "bears-duty": refs }));
-  const duty = (root, id, receiving) => writeFileSync(join(root, `duties/${id}.json`), JSON.stringify({ id, skills: [root === agencyRoot ? "execute" : "group#execute"], "receiver-condition": receiving }));
+  const duty = (root, id, receiving) => writeFileSync(join(root, `duties/${id}.json`), JSON.stringify({ id, skills: ["execute"], "receiver-condition": receiving }));
   duty(agencyRoot, "deliver", "local receiving"); duty(foreign, "deliver", "foreign receiving");
   office(["deliver"]);
   return { projectRoot, corpusRoot, agencyRoot, foreign, office, duty, target,
