@@ -20,7 +20,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@red-cup-engineering/agent-harness-computer-system-engineering-services-section": "0.2.12-dev.191"
+    "@red-cup-engineering/agent-harness-computer-systems-engineering-services-section": "^0.2.12-dev.194"
   },
   "license": "MIT",
   "funding": {

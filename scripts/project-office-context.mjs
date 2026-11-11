@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { projectOfficeContext } from "../src/projector.mjs";
-import { writeHostResourceControl } from "@red-cup-engineering/agent-harness-computer-system-engineering-services-section/host-resource-hook";
+import { writeHostResourceControl } from "@red-cup-engineering/agent-harness-computer-systems-engineering-services-section/host-resource-hook";
 
 if (process.argv.length !== 3) throw new Error("usage: project-office-context <project-office.json>");
 const file = resolve(process.argv[2]);
