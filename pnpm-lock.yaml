@@ -1510,7 +1510,7 @@ packages:
     resolution: {integrity: sha512-jhcouEOeBeH/BqCCy88cqXBu3euOqzTXZFESf3X9NeuwWJrvFhj9rugrAuG1/nv1NUZUTjC/9jyJnEakGvPtsQ==}
     engines: {node: '>=22.18'}
 
-  '@red-cup-engineering/knowledge-system-server@0.1.2':
+  '@red-cup-engineering/cairn@0.1.2':
     resolution: {integrity: sha512-iEdG3cb9KO12VNeCqUoAJMyfP6BjVLHebp0DcvWulS7aGXWkfhRFzQ6c986Ovf5MVrHfHlbMIdxha18Yhn/J8w==}
     engines: {node: '>=24'}
     hasBin: true
@@ -7694,7 +7694,7 @@ snapshots:
       '@red-cup-engineering/signgraph': 0.2.0
       '@red-cup-engineering/turtle-services-section': 0.1.2
 
-  '@red-cup-engineering/knowledge-system-server@0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)':
+  '@red-cup-engineering/cairn@0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)':
     dependencies:
       '@red-cup-engineering/communicating': 0.1.6(@types/node@26.6.6)(bufferutil@4.1.0)(debug@4.4.3)(ethers@6.17.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
       '@red-cup-engineering/computer-content-address-engineering-services-section': 0.2.0
@@ -8024,7 +8024,7 @@ snapshots:
       '@red-cup-engineering/kalshi-services-section': 0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
       '@red-cup-engineering/key-management-services-section': 0.5.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
       '@red-cup-engineering/knowing': 0.1.5(@types/node@26.6.6)(bufferutil@4.1.0)(debug@4.4.3)(ethers@6.17.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
-      '@red-cup-engineering/knowledge-system-server': 0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
+      '@red-cup-engineering/cairn': 0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
       '@red-cup-engineering/land-contracts-services-section': 0.1.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@red-cup-engineering/lean-system-services-section': 0.2.2(@types/node@26.6.6)(bufferutil@4.1.0)(debug@4.4.3)(ethers@6.17.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
       '@red-cup-engineering/markdown-engineering-services-section': 0.5.2
@@ -9583,7 +9583,7 @@ snapshots:
       '@red-cup-engineering/html-engineering-services-section': 0.1.2
       '@red-cup-engineering/html-structural-projection-service': 0.3.2
       '@red-cup-engineering/http-services-section': 0.6.2
-      '@red-cup-engineering/knowledge-system-server': 0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
+      '@red-cup-engineering/cairn': 0.1.2(@types/node@26.6.6)(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@3.25.76)
       '@red-cup-engineering/markdown-engineering-services-section': 0.5.2
       '@red-cup-engineering/signcell': 0.2.0
       '@red-cup-engineering/web-theming-service': 0.0.6
