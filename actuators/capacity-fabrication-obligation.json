@@ -1,0 +1,8 @@
+{
+  "type": "UnionNetworkActuator", "actor": "urn:ame:codex-capacity-fabrication-obligation-actuator", "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "derive-capacity-fabrication-obligation", "inputType": "StandingMunusAndCapacityGapK", "outputType": "CapacityFabricationObligationK", "offer": "urn:offer:codex-capacity-fabrication-obligation",
+  "protocols": ["MCP", "A2A 1.0", "RMN"], "provider": { "requiredActor": "urn:ame:bare-cedar-fog-codex", "mode": "self-provisioned-obligation-derivation" },
+  "compositionBoundary": "A witnessed missing capability on an open demand, the Executive Officer's standing cybernetic-medicine obligation, a real pipeline offer, and an explicit office transition induce one capacity-fabrication obligation. They do not fabricate a capability cell by declaration.",
+  "consideration": { "quoteState": "pipeline-provider-authored", "incurredState": "unknown-until-independently-witnessed", "acceptedValueState": "unknown-until-customer-outcome", "unknownIsZero": false },
+  "refusal": "Refuse an unobserved or closed gap, non-standing or wrong-office obligation, missing pipeline offer/market/transition receipts, generic capability claims, unbound completion, or provider completion offered as customer acceptance."
+}

@@ -1,0 +1,16 @@
+{
+  "type": "NetworkActuator",
+  "actor": "urn:ame:codex-source-pinned-analysis-actuator",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "analyze-source-bound-corpus",
+  "domain": "SourceBoundCorpusAndProviderDeliveryK",
+  "codomain": "ReceiptedAdvisoryOrObstructionK",
+  "offer": "urn:offer:codex-source-pinned-analysis",
+  "protocolFaces": ["MCP", "A2A 1.0", "RMN"],
+  "consideration": { "quoteState": "preserve-provider-observation", "incurredState": "unknown-until-independently-witnessed", "unknownIsZero": false },
+  "compositionBoundary": "Admits NotebookLM advice only after deterministic lookup and only when it binds the exact corpus, citations, contradictions, unknowns, and provider receipt. Advice carries no mutation, truth, or acceptance authority.",
+  "receipt": "Content-addressed advisory admission or obstruction binding stable Codex, exact corpus and lookup receipt, provider candidate and receipt, citations, unknowns, contradictions, and consideration observation.",
+  "refusal": "Refuse missing or drifting corpus identity, absent provider receipt or citation, out-of-corpus citation, authority-bearing advice, or a non-admitted provider. Provider refusal yields a no-bypass obstruction.",
+  "outcomeAuthority": "urn:leader:emsenn",
+  "integrationFace": "stdio:serve-codex-mape-office-mcp#admit_source_pinned_advisory"
+}

@@ -1,0 +1,8 @@
+{
+  "type": "UnionNetworkActuator", "actor": "urn:ame:codex-character-face-actuator", "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "compose-situated-character-face", "inputType": "ActorFaceCharacterMaskK", "outputType": "SituatedCharacterFaceK", "offer": "urn:offer:codex-character-face-composition",
+  "protocols": ["MCP", "A2A 1.0", "RMN"], "provider": { "requiredActor": "urn:ame:union-officer-academy", "mode": "formation-receipt-plus-codex-composition" },
+  "compositionBoundary": "A stable Actor, transient session face, persistent character, and composable mask remain distinct. The mask changes repertoire/register only and cannot assert office, incumbency, identity, or authority.",
+  "consideration": { "quoteState": "provider-authored", "incurredState": "requires-native-resource-receipt", "acceptedValueState": "unknown-until-customer-outcome", "unknownIsZero": false },
+  "refusal": "Refuse person/session substitution, character/mask drift, a face not resolving to the stable Actor, or any mask claiming office, incumbency, customer, or execution authority."
+}

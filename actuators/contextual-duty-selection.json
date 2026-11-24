@@ -1,0 +1,20 @@
+{
+  "type": "NetworkActuator",
+  "actor": "urn:ame:codex-contextual-duty-selection-actuator",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "select-context-warranted-office-duties",
+  "domain": "ExactOfficerContextBundleAndMoveK",
+  "codomain": "ContextWarrantedDutySelectionReceiptK",
+  "offer": "urn:offer:codex-contextual-duty-selection",
+  "protocolFaces": ["MCP", "A2A 1.0", "RMN"],
+  "consideration": {
+    "quoteState": "unknown-until-provider-authored-offer",
+    "incurredState": "unknown-until-independently-witnessed",
+    "unknownIsZero": false
+  },
+  "compositionBoundary": "Consumes a provider-compiled exact context bundle; selects only duties borne by the named office; conveys neither office incumbency nor execution or customer authority.",
+  "receipt": "Content-addressed selection binding actor, office, move, demand, session, context compilation receipt, selected duties, and warrant evidence.",
+  "refusal": "Refuse foreign actors or offices, inexact bundles, unknown evidence signals, empty selections, and any signal selecting a duty absent from the office.",
+  "outcomeAuthority": "urn:leader:emsenn",
+  "integrationFace": "stdio:serve-codex-mape-office-mcp#select_context_warranted_duties"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "UnionNetworkActuator",
+  "actor": "urn:ame:codex-fresh-verification-actuator",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "admit-evidence-bound-verification",
+  "inputType": "CandidateAndRequirementK",
+  "outputType": "VerificationOutcomeK",
+  "offer": "urn:offer:codex-fresh-verification",
+  "protocols": ["MCP", "A2A 1.0", "RMN"],
+  "provider": { "requiredActor": "urn:ame:semantic-candidate-review-service", "operation": "review-semantic-candidate", "mode": "purchase" },
+  "compositionBoundary": "Consumes the signed provider receipt and post-materialization executable assay from the semantic-candidate-review service. The result must bind the exact CandidatePatchK, RequirementSetK, provider attribution, outcome, and replay material; author identity neither proves nor disproves correctness.",
+  "consideration": { "quoteState": "provider-authored", "incurredState": "unknown-until-exactly-witnessed", "acceptedValueState": "unknown-until-customer-outcome", "unknownIsZero": false },
+  "receipt": "VerificationOutcomeK preserves provider receipt, review subject, real endpoint, fresh-process digest, timestamps, exact candidate and requirements, executable command, artifact digests, outcome, and economics.",
+  "refusal": "Refuse pre-materialization runs, wrong candidate/requirements, missing signed-provider receipt, non-interface endpoints, empty, unbound, or assay artifacts, provider authority over the distinct customer-outcome judgment, or malformed timestamps.",
+  "acceptance": "Passed verification is never customer acceptance or demand closure. Only urn:leader:emsenn may issue the separate CustomerOutcomeK."
+}

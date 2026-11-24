@@ -1,0 +1,30 @@
+{
+  "name": "@red-cup-engineering/codex-harness-projection-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Projects the source-owned office, duties and skill methods into disposable repository-local Codex context, without copied skills or operational authority.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cup-engineering/codex-harness-projection-service.git"
+  },
+  "bin": {
+    "project-office-context": "./scripts/project-office-context.mjs"
+  },
+  "scripts": {
+    "check": "node --check src/projector.mjs && node --check scripts/project-office-context.mjs",
+    "verify": "npm run check"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@red-cup-engineering/agent-harness-computer-systems-engineering-services-section": "^0.2.12-dev.194",
+    "@red-cup-engineering/semiotic-content-address-system": "^0.1.7 || 0.1.8-dev.0"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
+  }
+}

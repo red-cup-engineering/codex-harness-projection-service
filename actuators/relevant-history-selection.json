@@ -1,0 +1,20 @@
+{
+  "type": "NetworkActuator",
+  "actor": "urn:ame:codex-relevant-history-selection-actuator",
+  "customer": "urn:ame:bare-cedar-fog-codex",
+  "operation": "observe-relevant-prior-session-evidence",
+  "domain": "CurrentLeaderMoveAndSessionK",
+  "codomain": "RelevantPriorSessionEvidenceSetK",
+  "offer": "urn:offer:codex-relevant-history-selection",
+  "protocolFaces": ["MCP", "A2A 1.0", "RMN"],
+  "consideration": {
+    "quoteState": "unknown-until-provider-authored-offer",
+    "incurredState": "unknown-until-independently-witnessed",
+    "unknownIsZero": false
+  },
+  "compositionBoundary": "Matches only the exact normalized current Leader move against prior-session transcript events, emits no prompt body, selects only active exact-demand work, and performs no semantic or paraphrase inference.",
+  "receipt": "Content-addressed evidence set binding the stable Codex Actor, current move, current session, exact prompt digest, transcript source digests and coordinates, and active work evidence.",
+  "refusal": "Return explicit absence for a nonmatch; refuse an absent current session, malformed Leader move, or invalid cap. Preserve malformed source rows only as body-free scoped problems.",
+  "outcomeAuthority": "urn:leader:emsenn",
+  "integrationFace": "stdio:serve-codex-enterprise-mcp#observe_relevant_prior_session_evidence"
+}
