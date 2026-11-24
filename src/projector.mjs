@@ -2,6 +2,7 @@ import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system"
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, renameSync, lstatSync, realpathSync, readlinkSync, symlinkSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve, relative, sep } from "node:path";
 import { createHash } from "node:crypto";
+import { AGENCY_DIRECTORY } from "@red-cup-engineering/service-section-engineering-services-section/agency-layout";
 
 
 const stat = file => { try { return lstatSync(file); } catch (error) { if (error.code === "ENOENT") return undefined; throw error; } };
@@ -153,7 +154,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
   const rules = ruleFiles.map(file => record("rules", file.slice(0, -5)));
   const definition = record("offices", office);
   // Organizing's cross-house address law is <estate-relative section>#<id>:
-  // read only that owner's mounted lib/agency pool, never a basename substitute.
+  // read only that owner's mounted agent-records pool, never a basename substitute.
   // The source-only projector needs no estate census or institutional read.
   const resolveReference = (ref, pool) => {
     if (typeof ref !== "string") throw new Error(`invalid ${pool} reference`);
@@ -167,7 +168,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
         if (declared === undefined) throw new Error(`qualified ${pool} need a declared corpus root or project root`);
         const corpus = realpathSync(resolve(declared));
         if (!inside(corpus, sourceRoot)) throw new Error("office agency is outside its declared corpus");
-        root = join(corpus, match[1], "lib", "agency");
+        root = join(corpus, match[1], AGENCY_DIRECTORY);
         const owner = realpathSync(root);
         if (owner !== root || !inside(corpus, owner)) throw new Error("duty owner leaves its declared corpus or names a foreign source reference");
         if (owner === sourceRoot) root = agencyRoot;

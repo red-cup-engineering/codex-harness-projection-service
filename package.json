@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@red-cup-engineering/agent-harness-computer-systems-engineering-services-section": "^0.2.12-dev.194",
+    "@red-cup-engineering/service-section-engineering-services-section": "^0.2.2",
     "@red-cup-engineering/semiotic-content-address-system": "^0.1.7 || 0.1.8-dev.0"
   },
   "license": "MIT",
