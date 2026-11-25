@@ -1,7 +1,6 @@
 import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, renameSync, lstatSync, realpathSync, readlinkSync, symlinkSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve, relative, sep } from "node:path";
-import { createHash } from "node:crypto";
 import { AGENCY_DIRECTORY } from "@red-cup-engineering/service-section-engineering-services-section/agency-layout";
 
 
@@ -134,7 +133,7 @@ export function projectOfficeContext({ agencyRoot, office, target, detail = "ful
     const bytes = readFileSync(source);
     if (bytes.length > 131072) throw new Error(`office context source exceeds bound: ${file}`);
     if (/^(?:<{7}|>{7})(?: .*)?$/m.test(bytes.toString("utf8"))) throw new Error(`office context source has unresolved merge markers: ${file}`);
-    sources.push({ path: file, ...(root === agencyRoot ? {} : { root }), sha256: createHash("sha256").update(bytes).digest("hex") });
+    sources.push({ path: file, ...(root === agencyRoot ? {} : { root }), sha256: sha256Hex(bytes) });
     return bytes.toString("utf8");
   };
   const record = (pool, id, root = agencyRoot) => {
